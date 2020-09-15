@@ -2,15 +2,35 @@
 <html>
 
 <head>
-  <title>Coin Game</title>
-  <link href="style.css" rel="stylesheet" />
+    <title>Coin Game</title>
+    <link href="style.css" rel="stylesheet" />
 </head>
 
 <body onload="startGame()">
 
-  <script src="./script.js"></script>
-  <div id="water" class="water"></div>
-  <img src="assets/glass.png" alt="glassWater" class="glass" id="glass">
+    <script src="./script.js"></script>
+    <div id="water" class="water"></div>
+    <img src="assets/glass.png" alt="glassWater" class="glass" id="glass">
+    <div id="select_number_player">
+        <div class="select_section">
+            <div class="button noselect" id="remove">
+                <span class="button_value">-</span>
+            </div>
+        </div>
+        <div id="coin_list" class="select_section coin_list">
+
+        </div>
+        <div class="select_section">
+            <div class="button noselect" id="add">
+                <span class="button_value">+</span>
+            </div>
+        </div>
+        <div class="select_section">
+            <div class="button noselect" id="startBtn">
+                <span class="button_text">start</span>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
