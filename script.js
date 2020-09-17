@@ -1,5 +1,11 @@
 numPlayer = 2;
 
+currentPlayer = 0;
+
+var listCoinName = ["yellow", "red", "green", "blue"];
+
+var playerOrder = [];
+
 function startGame() {
     console.log('Im alive');
 
@@ -8,14 +14,35 @@ function startGame() {
     setUpAddSelectPlayer();
 }
 
+function showSpinningCoin() {
+    var spinningCoinDivision = document.getElementById("select_coin");
 
+    var coin1 = document.getElementById("coin1");
+    var coin2 = document.getElementById("coin2");
+    var coin3 = document.getElementById("coin3");
+
+    coin1.src = "assets/coin_gif/" + playerOrder[currentPlayer] + ".gif";
+    coin2.src = "assets/coin_gif/" + playerOrder[currentPlayer] + ".gif";
+    coin3.src = "assets/coin_gif/" + playerOrder[currentPlayer] + ".gif";
+
+    spinningCoinDivision.style.display = "flex";
+
+    setTimeout(() => { coin1.src = "assets/coin/" + playerOrder[currentPlayer] + ".png" }, 800);
+    setTimeout(() => { coin2.src = "assets/coin/" + playerOrder[currentPlayer] + ".png" }, 1100);
+    setTimeout(() => { coin3.src = "assets/coin/" + playerOrder[currentPlayer] + ".png"; }, 1400);
+
+    console.log(playerOrder);
+}
 
 function waterAndGlassUp() {
+
     var water = document.getElementById("water");
     var glass = document.getElementById("glass");
 
     water.classList.add('waterUp');
     glass.classList.add('glassUp');
+
+    setTimeout(() => showSpinningCoin(), 1200);
 }
 
 function setGlassWaterSize() {
@@ -28,7 +55,6 @@ function setGlassWaterSize() {
 }
 
 function setUpAddSelectPlayer() {
-    var listCoinName = ["yellow", "red", "green", "blue"];
     var selectPlayer = document.getElementById('select_number_player');
     var addBtn = document.getElementById('add');
     var removeBtn = document.getElementById('remove');
@@ -66,8 +92,23 @@ function setUpAddSelectPlayer() {
 
     startBtn.addEventListener("click", () => {
         selectPlayer.style.display = "none";
+
+        for (var i = 0; i < numPlayer; i++) {
+            playerOrder.push(listCoinName[i]);
+        }
+
+        shuffle(playerOrder);
+
         waterAndGlassUp();
     });
 
     selectPlayer.style.display = "block";
+}
+
+function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
 }

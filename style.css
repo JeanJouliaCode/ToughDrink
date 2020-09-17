@@ -97,3 +97,12 @@ body {
     display: flex;
     justify-items: center;
 }
+
+.select_coin {
+    top: 10%;
+    position: absolute;
+    height: 20%;
+    width: 100%;
+    display: none;
+    justify-content: center;
+}
