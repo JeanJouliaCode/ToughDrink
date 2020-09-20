@@ -6,12 +6,43 @@ var listCoinName = ["yellow", "red", "green", "blue"];
 
 var playerOrder = [];
 
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
+
+
 function startGame() {
     console.log('Im alive');
 
     var coinNumber = setGlassWaterSize()
         //waterAndGlassUp();
     setUpAddSelectPlayer();
+}
+
+function initPowerBar() {
+    var back_div = document.getElementById('black_width');
+    var container = document.getElementById('select_power');
+    var position = 100;
+    var direction = 3;
+    var savedPosition = 0;
+
+    container.style.display = "flex";
+
+    function move() {
+
+        position += direction;
+        back_div.style.width = position.toString() + 'px';
+        console.log("moved", back_div.style.width)
+
+        if (position > 630 || position < 10 || (Math.random() > 0.99 && Math.abs((position - savedPosition) > 50))) {
+            savedPosition = position;
+
+            direction *= -1;
+        }
+        requestAnimationFrame(move);
+    }
+
+    move();
 }
 
 function showSpinningCoin() {
@@ -31,7 +62,33 @@ function showSpinningCoin() {
     setTimeout(() => { coin2.src = "assets/coin/" + playerOrder[currentPlayer] + ".png" }, 1100);
     setTimeout(() => { coin3.src = "assets/coin/" + playerOrder[currentPlayer] + ".png"; }, 1400);
 
-    console.log(playerOrder);
+    coin1.addEventListener('click', () => {
+        coin1.classList.add('coin');
+        coin2.style.display = " none";
+        coin3.style.display = " none";
+        setTimeout(() => { reset() }, 200);
+    });
+    coin2.addEventListener('click', () => {
+        coin2.classList.add('coin');
+        coin1.style.display = " none";
+        coin3.style.display = " none";
+        setTimeout(() => { reset() }, 200);
+    });
+    coin3.addEventListener('click', () => {
+        coin3.classList.add('coin');
+        coin2.style.display = " none";
+        coin1.style.display = " none";
+        setTimeout(() => { reset() }, 200);
+    });
+
+    function reset() {
+        spinningCoinDivision.style.display = "none";
+        coin1.style.display = " block";
+        coin2.style.display = " block";
+        coin3.style.display = " block";
+        initPowerBar();
+    }
+
 }
 
 function waterAndGlassUp() {
