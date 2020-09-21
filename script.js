@@ -48,7 +48,7 @@ function initPowerBar() {
         requestAnimationFrame(move);
     }
 
-    power_container.addEventListener("click", (event) => {
+    power_container.addEventListener("mousedown", (event) => {
         var x = event.clientX - power_container.offsetLeft;
 
         console.log(x, "x")
