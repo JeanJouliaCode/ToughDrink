@@ -124,6 +124,8 @@ body {
     height: 100%;
     width: 100px;
     background-color: black;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
 }
 
 .red {
@@ -154,4 +156,5 @@ body {
     width: 800px;
     display: flex;
     background-color: black;
+    border-radius: 15px;
 }

@@ -22,6 +22,10 @@ function startGame() {
 function initPowerBar() {
     var back_div = document.getElementById('black_width');
     var container = document.getElementById('select_power');
+    var power_container = document.getElementById('power_container');
+    var cursor = document.getElementById('cursor');
+    cursorPosition = 0;
+
     var position = 100;
     var direction = 3;
     var savedPosition = 0;
@@ -31,16 +35,41 @@ function initPowerBar() {
     function move() {
 
         position += direction;
-        back_div.style.width = position.toString() + 'px';
-        console.log("moved", back_div.style.width)
+        cursorPosition += direction;
+        cursor.style.marginLeft = cursorPosition.toString() + "px";
 
-        if (position > 630 || position < 10 || (Math.random() > 0.99 && Math.abs((position - savedPosition) > 50))) {
+        back_div.style.width = position.toString() + 'px';
+
+        if (position > 630 || position < 10 || (Math.random() > 0.995)) {
             savedPosition = position;
 
             direction *= -1;
         }
         requestAnimationFrame(move);
     }
+
+    power_container.addEventListener("click", (event) => {
+        var x = event.clientX - power_container.offsetLeft;
+
+        console.log(x, "x")
+
+        if (x < position || x > (position + 50 + 50 + 20 + 20 + 10 + 10 + 2)) {
+            console.log('fail', position, x);
+        } else if (x < position + 50 || x > (position + 50 + 20 + 20 + 10 + 10 + 2)) {
+            console.log('2');
+        } else if (x < position + 50 + 20 || x > (position + 50 + 20 + 10 + 10 + 2)) {
+            console.log('1');
+        } else if (x < position + 50 + 20 + 10 || x > (position + 50 + 20 + 10 + 2)) {
+            console.log('0');
+        } else {
+            console.log('perfect');
+        }
+
+        cursorPosition = x + power_container.offsetLeft;
+
+        cursor.style.marginLeft = cursorPosition.toString() + "px";
+        cursor.style.marginTop = "250px";
+    })
 
     move();
 }
@@ -58,34 +87,34 @@ function showSpinningCoin() {
 
     spinningCoinDivision.style.display = "flex";
 
-    setTimeout(() => { coin1.src = "assets/coin/" + playerOrder[currentPlayer] + ".png" }, 800);
-    setTimeout(() => { coin2.src = "assets/coin/" + playerOrder[currentPlayer] + ".png" }, 1100);
-    setTimeout(() => { coin3.src = "assets/coin/" + playerOrder[currentPlayer] + ".png"; }, 1400);
+    setTimeout(() => { coin1.src = "assets/1/" + playerOrder[currentPlayer] + ".png" }, 800);
+    setTimeout(() => { coin2.src = "assets/2/" + playerOrder[currentPlayer] + ".png" }, 1100);
+    setTimeout(() => { coin3.src = "assets/3/" + playerOrder[currentPlayer] + ".png"; }, 1400);
 
     coin1.addEventListener('click', () => {
         coin1.classList.add('coin');
-        coin2.style.display = " none";
-        coin3.style.display = " none";
+        coin2.style.height = "0px";
+        coin3.style.height = "0px";
         setTimeout(() => { reset() }, 200);
     });
     coin2.addEventListener('click', () => {
         coin2.classList.add('coin');
-        coin1.style.display = " none";
-        coin3.style.display = " none";
+        coin1.style.height = "0px";
+        coin3.style.height = "0px";
         setTimeout(() => { reset() }, 200);
     });
     coin3.addEventListener('click', () => {
         coin3.classList.add('coin');
-        coin2.style.display = " none";
-        coin1.style.display = " none";
+        coin2.style.height = "0px";
+        coin1.style.height = "0px";
         setTimeout(() => { reset() }, 200);
     });
 
     function reset() {
         spinningCoinDivision.style.display = "none";
-        coin1.style.display = " block";
-        coin2.style.display = " block";
-        coin3.style.display = " block";
+        coin1.style.height = "100%";
+        coin2.style.height = "100%";
+        coin3.style.height = "100%";
         initPowerBar();
     }
 
