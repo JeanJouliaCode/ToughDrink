@@ -6,6 +6,10 @@ var listCoinName = ["yellow", "red", "green", "blue"];
 
 var playerOrder = [];
 
+var marginVal = 0;
+
+coinWidth = 15;
+
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
@@ -15,11 +19,13 @@ function startGame() {
     console.log('Im alive');
 
     var coinNumber = setGlassWaterSize()
-        //waterAndGlassUp();
+
+    console.log(coinNumber, "coinNumber");
+    //waterAndGlassUp();
     setUpAddSelectPlayer();
 }
 
-function initPowerBar() {
+function initPowerBar(coinNb) {
     var back_div = document.getElementById('black_width');
     var container = document.getElementById('select_power');
     var power_container = document.getElementById('power_container');
@@ -75,6 +81,7 @@ function initPowerBar() {
         setTimeout(() => {
             cursor.style.display = "none";
             container.style.display = "none";
+            dropCoin(val, coinNb);
         }, 300);
 
     }
@@ -82,8 +89,43 @@ function initPowerBar() {
     move();
 }
 
-function dropCoin(value) {
+async function dropCoin(value, coinNb) {
+    var marginValues = [0.40, 0.30, 0.10, 0.05];
+    var glassDiv = document.getElementById("glass");
+    var droppedCoin = document.getElementById('dropped_coin');
+    var glass = document.getElementById('coin_div');
 
+    var margin = (value == -1) ? 0.69 : marginValues[value];
+    console.log('height', (document.body.clientHeight * margin).toString() + 'px')
+    droppedCoin.src = "assets/coin/" + playerOrder[currentPlayer] + ".png";
+    droppedCoin.style.display = 'block';
+    droppedCoin.style.paddingTop = (document.body.clientHeight * margin).toString() + 'px';
+    droppedCoin.classList.add('coinDown');
+    droppedCoin.style.paddingTop = (document.body.clientHeight * 0.66).toString() + "px";
+
+    setTimeout(() => {
+        droppedCoin.style.display = 'none';
+        var coinImage = document.createElement("IMG");
+        coinImage.src = "assets/side_coin/" + playerOrder[currentPlayer] + ".png";
+        coinImage.style.height = (coinWidth * coinNb).toString() + "px";
+        coinImage.classList.add('side_coin');
+        glass.appendChild(coinImage);
+        marginVal += (coinWidth * coinNb);
+        glassDiv.style.marginTop = (marginVal).toString() + "px";
+    }, 599);
+
+    // droppedCoin.style.marginTop = margin.toString() + 'px';
+    // droppedCoin.style.display = 'block';
+    // console.log(document.body.clientHeight);
+
+    // for (margin; margin <= document.body.clientHeight * 0.70; margin += 15) {
+    //     await sleep(10);
+    //     droppedCoin.style.marginTop = margin.toString() + 'px';
+    // }
+}
+
+function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 function showSpinningCoin() {
@@ -107,27 +149,27 @@ function showSpinningCoin() {
         coin1.classList.add('coin');
         coin2.style.height = "0px";
         coin3.style.height = "0px";
-        setTimeout(() => { reset() }, 200);
+        setTimeout(() => { reset(1) }, 200);
     });
     coin2.addEventListener('click', () => {
         coin2.classList.add('coin');
         coin1.style.height = "0px";
         coin3.style.height = "0px";
-        setTimeout(() => { reset() }, 200);
+        setTimeout(() => { reset(2) }, 200);
     });
     coin3.addEventListener('click', () => {
         coin3.classList.add('coin');
         coin2.style.height = "0px";
         coin1.style.height = "0px";
-        setTimeout(() => { reset() }, 200);
+        setTimeout(() => { reset(3) }, 200);
     });
 
-    function reset() {
+    function reset(coinNb) {
         spinningCoinDivision.style.display = "none";
         coin1.style.height = "100%";
         coin2.style.height = "100%";
         coin3.style.height = "100%";
-        initPowerBar();
+        initPowerBar(coinNb);
     }
 
 }
@@ -146,8 +188,10 @@ function waterAndGlassUp() {
 function setGlassWaterSize() {
     var glass = document.getElementById("glass");
     var numberCoin = Math.floor(Math.random() * 6) + 5;
-    var sizeGlass = numberCoin * 15 * 2;
+    var sizeGlass = numberCoin * coinWidth * 2;
     glass.style.height = (sizeGlass).toString() + "px";
+
+    marginVal = -sizeGlass / 2;
     glass.style.marginTop = -sizeGlass / 2 + "px";
     return numberCoin;
 }

@@ -35,6 +35,7 @@ body {
     left: 0;
     right: 0;
     top: 150%;
+    z-index: 3;
 }
 
 .glass.glassUp {
@@ -168,4 +169,47 @@ body {
     top: 18%;
     z-index: 10;
     background-color: gold;
+}
+
+.dropped_coin {
+    width: 150px;
+    margin: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.dropped_coin {
+    display: none;
+    width: 150px;
+    margin: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 2;
+}
+
+.dropped_coin.coinDown {
+    transition: padding 600ms ease-in;
+}
+
+.side_coin {
+    height: 15px;
+    width: 90%;
+    margin-left: 5%;
+    z-index: -1;
+}
+
+.glassImg {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.coin_div {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column-reverse;
 }
