@@ -50,28 +50,40 @@ function initPowerBar() {
 
     power_container.addEventListener("mousedown", (event) => {
         var x = event.clientX - power_container.offsetLeft;
+        cursor.style.display = "block";
 
         console.log(x, "x")
 
         if (x < position || x > (position + 50 + 50 + 20 + 20 + 10 + 10 + 2)) {
-            console.log('fail', position, x);
+            displayResult(3);
         } else if (x < position + 50 || x > (position + 50 + 20 + 20 + 10 + 10 + 2)) {
-            console.log('2');
+            displayResult(2);
         } else if (x < position + 50 + 20 || x > (position + 50 + 20 + 10 + 10 + 2)) {
-            console.log('1');
+            displayResult(1);
         } else if (x < position + 50 + 20 + 10 || x > (position + 50 + 20 + 10 + 2)) {
-            console.log('0');
+            displayResult(0);
         } else {
-            console.log('perfect');
+            displayResult(-1);
         }
 
         cursorPosition = x + power_container.offsetLeft;
 
         cursor.style.marginLeft = cursorPosition.toString() + "px";
-        cursor.style.marginTop = "250px";
     })
 
+    function displayResult(val) {
+        setTimeout(() => {
+            cursor.style.display = "none";
+            container.style.display = "none";
+        }, 300);
+
+    }
+
     move();
+}
+
+function dropCoin(value) {
+
 }
 
 function showSpinningCoin() {
