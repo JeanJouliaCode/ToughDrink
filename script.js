@@ -1,4 +1,6 @@
-numPlayer = 2;
+var numPlayer = 2;
+
+var coinNumber = 0;
 
 currentPlayer = 0;
 
@@ -6,9 +8,13 @@ var listCoinName = ["yellow", "red", "green", "blue"];
 
 var playerOrder = [];
 
-var marginVal = 0;
+var position
 
-coinWidth = 15;
+var choosenCoin
+
+var flag = true;
+
+const coinWidth = 20;
 
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -16,25 +22,20 @@ window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequest
 
 
 function startGame() {
-    console.log('Im alive');
-
-    var coinNumber = setGlassWaterSize()
-
-    console.log(coinNumber, "coinNumber");
-    //waterAndGlassUp();
+    setGlassWaterSize()
     setUpAddSelectPlayer();
 }
 
 function initPowerBar(coinNb) {
+    choosenCoin = coinNb;
     var back_div = document.getElementById('black_width');
     var container = document.getElementById('select_power');
     var power_container = document.getElementById('power_container');
     var cursor = document.getElementById('cursor');
     cursorPosition = 0;
 
-    var position = 100;
+    position = 100;
     var direction = 3;
-    var savedPosition = 0;
 
     container.style.display = "flex";
 
@@ -47,41 +48,44 @@ function initPowerBar(coinNb) {
         back_div.style.width = position.toString() + 'px';
 
         if (position > 630 || position < 10 || (Math.random() > 0.995)) {
-            savedPosition = position;
-
             direction *= -1;
         }
-        requestAnimationFrame(move);
-    }
 
-    power_container.addEventListener("mousedown", (event) => {
-        var x = event.clientX - power_container.offsetLeft;
-        cursor.style.display = "block";
-
-        console.log(x, "x")
-
-        if (x < position || x > (position + 50 + 50 + 20 + 20 + 10 + 10 + 2)) {
-            displayResult(3);
-        } else if (x < position + 50 || x > (position + 50 + 20 + 20 + 10 + 10 + 2)) {
-            displayResult(2);
-        } else if (x < position + 50 + 20 || x > (position + 50 + 20 + 10 + 10 + 2)) {
-            displayResult(1);
-        } else if (x < position + 50 + 20 + 10 || x > (position + 50 + 20 + 10 + 2)) {
-            displayResult(0);
-        } else {
-            displayResult(-1);
+        if (container.style.display == "flex") {
+            requestAnimationFrame(move);
         }
 
-        cursorPosition = x + power_container.offsetLeft;
+    }
 
-        cursor.style.marginLeft = cursorPosition.toString() + "px";
-    })
+    if (flag) {
+        flag = false;
+        power_container.addEventListener("mousedown", (event) => {
+            var x = event.clientX - power_container.offsetLeft;
+            cursor.style.display = "block";
+
+            if (x < position || x > (position + 50 + 50 + 20 + 20 + 10 + 10 + 2)) {
+                displayResult(3);
+            } else if (x < position + 50 || x > (position + 50 + 20 + 20 + 10 + 10 + 2)) {
+                displayResult(2);
+            } else if (x < position + 50 + 20 || x > (position + 50 + 20 + 10 + 10 + 2)) {
+                displayResult(1);
+            } else if (x < position + 50 + 20 + 10 || x > (position + 50 + 20 + 10 + 2)) {
+                displayResult(0);
+            } else {
+                displayResult(-1);
+            }
+
+            cursorPosition = x + power_container.offsetLeft;
+
+            cursor.style.marginLeft = cursorPosition.toString() + "px";
+        })
+    }
 
     function displayResult(val) {
         setTimeout(() => {
             cursor.style.display = "none";
             container.style.display = "none";
-            dropCoin(val, coinNb);
+            dropCoin(val, choosenCoin);
         }, 300);
 
     }
@@ -93,42 +97,146 @@ async function dropCoin(value, coinNb) {
     var marginValues = [0.40, 0.30, 0.10, 0.05];
     var glassDiv = document.getElementById("glass");
     var droppedCoin = document.getElementById('dropped_coin');
-    var glass = document.getElementById('coin_div');
+    var coinDiv = document.getElementById('coin_div');
 
-    var margin = (value == -1) ? 0.69 : marginValues[value];
-    console.log('height', (document.body.clientHeight * margin).toString() + 'px')
+    var margin = (value == -1) ? 0.5 : marginValues[value];
+
     droppedCoin.src = "assets/coin/" + playerOrder[currentPlayer] + ".png";
+    droppedCoin.style.marginTop = (document.body.clientHeight * margin).toString() + 'px';
     droppedCoin.style.display = 'block';
-    droppedCoin.style.paddingTop = (document.body.clientHeight * margin).toString() + 'px';
+    await sleep(400);
     droppedCoin.classList.add('coinDown');
-    droppedCoin.style.paddingTop = (document.body.clientHeight * 0.66).toString() + "px";
+    droppedCoin.style.marginTop = (document.body.clientHeight * 0.50).toString() + "px";
 
-    setTimeout(() => {
-        droppedCoin.style.display = 'none';
-        var coinImage = document.createElement("IMG");
-        coinImage.src = "assets/side_coin/" + playerOrder[currentPlayer] + ".png";
-        coinImage.style.height = (coinWidth * coinNb).toString() + "px";
-        coinImage.classList.add('side_coin');
-        glass.appendChild(coinImage);
+    if (value != -1) {
         marginVal += (coinWidth * coinNb);
-        glassDiv.style.marginTop = (marginVal).toString() + "px";
-    }, 599);
+    }
 
-    // droppedCoin.style.marginTop = margin.toString() + 'px';
-    // droppedCoin.style.display = 'block';
-    // console.log(document.body.clientHeight);
+    if (marginVal + coinWidth * value <= 0) { // + glassDiv.offsetHeight
+        setTimeout(() => {
+            droppedCoin.style.display = 'none';
+            var coinImage = document.createElement("IMG");
+            coinImage.src = "assets/side_coin/" + playerOrder[currentPlayer] + ".png";
+            coinImage.style.height = (coinWidth + coinNb * 10).toString() + "px";
+            coinImage.classList.add('side_coin');
+            coinDiv.appendChild(coinImage);
 
-    // for (margin; margin <= document.body.clientHeight * 0.70; margin += 15) {
-    //     await sleep(10);
-    //     droppedCoin.style.marginTop = margin.toString() + 'px';
-    // }
+            if (value != -1) {
+                glassDiv.style.marginTop = (marginVal + coinWidth * value).toString() + "px";
+                setTimeout(() => {
+                    glassDiv.style.marginTop = (marginVal).toString() + "px";
+                }, 300);
+            }
+
+            setTimeout(() => {
+                currentPlayer = (currentPlayer + 1) % numPlayer;
+                showSpinningCoin();
+            }, 400);
+        }, 599);
+    } else {
+        setTimeout(() => {
+            droppedCoin.style.display = 'none';
+            var coinImage = document.createElement("IMG");
+            coinImage.src = "assets/side_coin/" + playerOrder[currentPlayer] + ".png";
+            coinImage.style.height = (coinWidth + coinNb * 10).toString() + "px";
+            coinImage.classList.add('side_coin');
+            coinDiv.appendChild(coinImage);
+            glassDiv.classList.remove('glassUp');
+
+            setTimeout(() => {
+                displayLoser();
+            }, 500);
+
+        }, 599);
+
+    }
+}
+
+function reset() {
+    numPlayer = 2;
+    coinNumber = 0;
+    currentPlayer = 0;
+    listCoinName = ["yellow", "red", "green", "blue"];
+    playerOrder = [];
+    position
+    choosenCoin
+    flag = true;
+    water.classList.remove('waterUp');
+    document.getElementById('coin_list').innerHTML = "";
+}
+
+function displayLoser() {
+    if (numPlayer == 2) {
+        var winnerDiv = document.getElementById('winnerDiv');
+        var winnerSpan = document.getElementById('winnerName');
+        currentPlayer = (currentPlayer + 1) % numPlayer;
+        winnerSpan.textContent = playerOrder[currentPlayer];
+
+        winnerDiv.style.display = "flex";
+        switch (playerOrder[currentPlayer]) {
+            case 'yellow':
+                winnerSpan.style.color = "#F2A52C";
+                break;
+            case 'red':
+                winnerSpan.style.color = "#F64C27";
+                break;
+            case 'blue':
+                winnerSpan.style.color = "#2852A9";
+                break;
+            case 'green':
+                winnerSpan.style.color = "#4DA038";
+                break;
+        }
+
+        setTimeout(() => {
+            winnerDiv.style.display = "none";
+            reset();
+            setGlassWaterSize()
+            setUpAddSelectPlayer();
+        }, 3000);
+
+    } else {
+        var loserDiv = document.getElementById('loserDiv');
+        var loserSpan = document.getElementById('loserName');
+        var water = document.getElementById("water");
+        loserSpan.textContent = playerOrder[currentPlayer];
+        switch (playerOrder[currentPlayer]) {
+            case 'yellow':
+                loserSpan.style.color = "#F2A52C";
+                break;
+            case 'red':
+                loserSpan.style.color = "#F64C27";
+                break;
+            case 'blue':
+                loserSpan.style.color = "#2852A9";
+                break;
+            case 'green':
+                loserSpan.style.color = "#4DA038";
+                break;
+        }
+        playerOrder.pop(currentPlayer);
+        numPlayer--;
+        currentPlayer = (currentPlayer + 1) % numPlayer;
+        loserDiv.style.display = "flex";
+
+        setTimeout(() => {
+            water.classList.remove('waterUp');
+        }, 500);
+
+
+        setTimeout(() => {
+            loserDiv.style.display = "none";
+            setGlassWaterSize();
+            waterAndGlassUp();
+        }, 2000);
+    }
 }
 
 function sleep(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-function showSpinningCoin() {
+async function showSpinningCoin() {
     var spinningCoinDivision = document.getElementById("select_coin");
 
     var coin1 = document.getElementById("coin1");
@@ -143,32 +251,39 @@ function showSpinningCoin() {
 
     setTimeout(() => { coin1.src = "assets/1/" + playerOrder[currentPlayer] + ".png" }, 800);
     setTimeout(() => { coin2.src = "assets/2/" + playerOrder[currentPlayer] + ".png" }, 1100);
-    setTimeout(() => { coin3.src = "assets/3/" + playerOrder[currentPlayer] + ".png"; }, 1400);
+    await setTimeout(() => { coin3.src = "assets/3/" + playerOrder[currentPlayer] + ".png"; }, 1400);
 
-    coin1.addEventListener('click', () => {
-        coin1.classList.add('coin');
-        coin2.style.height = "0px";
-        coin3.style.height = "0px";
-        setTimeout(() => { reset(1) }, 200);
-    });
-    coin2.addEventListener('click', () => {
-        coin2.classList.add('coin');
-        coin1.style.height = "0px";
-        coin3.style.height = "0px";
-        setTimeout(() => { reset(2) }, 200);
-    });
-    coin3.addEventListener('click', () => {
-        coin3.classList.add('coin');
-        coin2.style.height = "0px";
-        coin1.style.height = "0px";
-        setTimeout(() => { reset(3) }, 200);
-    });
+
+    if (flag) {
+        coin1.addEventListener('click', () => {
+            coin1.classList.add('coin');
+            coin2.style.height = "0px";
+            coin3.style.height = "0px";
+            setTimeout(() => { reset(1) }, 200);
+        });
+        coin2.addEventListener('click', () => {
+            coin2.classList.add('coin');
+            coin1.style.height = "0px";
+            coin3.style.height = "0px";
+            setTimeout(() => { reset(2) }, 200);
+        });
+        coin3.addEventListener('click', () => {
+            coin3.classList.add('coin');
+            coin2.style.height = "0px";
+            coin1.style.height = "0px";
+            setTimeout(() => { reset(3) }, 200);
+        });
+    }
 
     function reset(coinNb) {
+        console.log("reset", coinNb)
         spinningCoinDivision.style.display = "none";
-        coin1.style.height = "100%";
-        coin2.style.height = "100%";
-        coin3.style.height = "100%";
+        coin1.style.height = "";
+        coin2.style.height = "";
+        coin3.style.height = "";
+        coin1.classList.remove('coin');
+        coin2.classList.remove('coin');
+        coin3.classList.remove('coin');
         initPowerBar(coinNb);
     }
 
@@ -187,6 +302,7 @@ function waterAndGlassUp() {
 
 function setGlassWaterSize() {
     var glass = document.getElementById("glass");
+    document.getElementById("coin_div").innerHTML = "";
     var numberCoin = Math.floor(Math.random() * 6) + 5;
     var sizeGlass = numberCoin * coinWidth * 2;
     glass.style.height = (sizeGlass).toString() + "px";
