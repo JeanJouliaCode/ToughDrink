@@ -16,14 +16,49 @@ var flag = true;
 
 const coinWidth = 20;
 
+var clicked = false;
+
+
+var drop = new Audio('assets/sound/waterDrop.mp3');
+var fill = new Audio('assets/sound/fill.mp3');
+var flip = new Audio('assets/sound/flip.mp3');
+
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 
 
 function startGame() {
+    initGlassMovement();
     setGlassWaterSize()
     setUpAddSelectPlayer();
+}
+
+function initGlassMovement() {
+    var glass = document.getElementById("glass");
+    var val = 50;
+    var direction = 0.01;
+
+    maxVal = 51;
+    minVal = 49;
+
+    function move() {
+
+        if (val < minVal) {
+            maxVal = 51 - Math.random();
+            direction = Math.abs(direction);
+        } else if (val > maxVal) {
+            minVal = 49 + Math.random();
+            direction = -Math.abs(direction);
+        }
+
+        val += direction;
+
+        glass.style.left = val.toString() + "%";
+        requestAnimationFrame(move);
+    }
+
+    move();
 }
 
 function initPowerBar(coinNb) {
@@ -36,6 +71,7 @@ function initPowerBar(coinNb) {
 
     position = 100;
     var direction = 3;
+    clicked = false;
 
     container.style.display = "flex";
 
@@ -51,7 +87,7 @@ function initPowerBar(coinNb) {
             direction *= -1;
         }
 
-        if (container.style.display == "flex") {
+        if (!clicked) {
             requestAnimationFrame(move);
         }
 
@@ -60,16 +96,17 @@ function initPowerBar(coinNb) {
     if (flag) {
         flag = false;
         power_container.addEventListener("mousedown", (event) => {
+            clicked = true;
             var x = event.clientX - power_container.offsetLeft;
             cursor.style.display = "block";
 
-            if (x < position || x > (position + 50 + 50 + 20 + 20 + 10 + 10 + 2)) {
+            if (x - 5 < position || x - 5 > (position + 50 + 50 + 15 + 15 + 8 + 8 + 2)) {
                 displayResult(3);
-            } else if (x < position + 50 || x > (position + 50 + 20 + 20 + 10 + 10 + 2)) {
+            } else if (x - 5 < position + 50 || x - 5 > (position + 50 + 15 + 15 + 8 + 8 + 2)) {
                 displayResult(2);
-            } else if (x < position + 50 + 20 || x > (position + 50 + 20 + 10 + 10 + 2)) {
+            } else if (x - 5 < position + 50 + 15 || x - 5 > (position + 50 + 15 + 8 + 8 + 2)) {
                 displayResult(1);
-            } else if (x < position + 50 + 20 + 10 || x > (position + 50 + 20 + 10 + 2)) {
+            } else if (x - 5 < position + 50 + 15 + 8 || x - 5 > (position + 50 + 15 + 8 + 2)) {
                 displayResult(0);
             } else {
                 displayResult(-1);
@@ -119,7 +156,23 @@ async function dropCoin(value, coinNb) {
             coinImage.src = "assets/side_coin/" + playerOrder[currentPlayer] + ".png";
             coinImage.style.height = (coinWidth + coinNb * 10).toString() + "px";
             coinImage.classList.add('side_coin');
+            console.log(coinDiv.children.length);
+            if (coinDiv.children.length == 0) {
+                console.log('first');
+                coinImage.style.marginBottom = "10px";
+            }
+
+            var offset = Math.floor(Math.random() * 5) + 5;
+
+            if (Math.random() > 0.5) {
+                coinImage.style.marginLeft = offset.toString() + "px";
+            } else {
+                coinImage.style.marginRight = offset.toString() + "px";
+            }
+
             coinDiv.appendChild(coinImage);
+
+            drop.play();
 
             if (value != -1) {
                 glassDiv.style.marginTop = (marginVal + coinWidth * value).toString() + "px";
@@ -160,7 +213,6 @@ function reset() {
     playerOrder = [];
     position
     choosenCoin
-    flag = true;
     water.classList.remove('waterUp');
     document.getElementById('coin_list').innerHTML = "";
 }
@@ -248,6 +300,7 @@ async function showSpinningCoin() {
     coin3.src = "assets/coin_gif/" + playerOrder[currentPlayer] + ".gif";
 
     spinningCoinDivision.style.display = "flex";
+    flip.play();
 
     setTimeout(() => { coin1.src = "assets/1/" + playerOrder[currentPlayer] + ".png" }, 800);
     setTimeout(() => { coin2.src = "assets/2/" + playerOrder[currentPlayer] + ".png" }, 1100);
@@ -290,6 +343,7 @@ async function showSpinningCoin() {
 }
 
 function waterAndGlassUp() {
+    fill.play();
 
     var water = document.getElementById("water");
     var glass = document.getElementById("glass");
@@ -334,31 +388,33 @@ function setUpAddSelectPlayer() {
     coinList.appendChild(yellow);
     coinList.appendChild(red);
 
-    addBtn.addEventListener("click", () => {
-        if (numPlayer < 4) {
-            coinList.appendChild(listObject[numPlayer]);
-            numPlayer++;
-        }
-    });
+    if (flag) {
+        addBtn.addEventListener("click", () => {
+            if (numPlayer < 4) {
+                coinList.appendChild(listObject[numPlayer]);
+                numPlayer++;
+            }
+        });
 
-    removeBtn.addEventListener("click", () => {
-        if (numPlayer > 2) {
-            coinList.removeChild(listObject[numPlayer - 1]);
-            numPlayer--;
-        }
-    });
+        removeBtn.addEventListener("click", () => {
+            if (numPlayer > 2) {
+                coinList.removeChild(listObject[numPlayer - 1]);
+                numPlayer--;
+            }
+        });
 
-    startBtn.addEventListener("click", () => {
-        selectPlayer.style.display = "none";
+        startBtn.addEventListener("click", () => {
+            selectPlayer.style.display = "none";
 
-        for (var i = 0; i < numPlayer; i++) {
-            playerOrder.push(listCoinName[i]);
-        }
+            for (var i = 0; i < numPlayer; i++) {
+                playerOrder.push(listCoinName[i]);
+            }
 
-        shuffle(playerOrder);
+            shuffle(playerOrder);
 
-        waterAndGlassUp();
-    });
+            waterAndGlassUp();
+        });
+    }
 
     selectPlayer.style.display = "block";
 }
