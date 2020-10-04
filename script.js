@@ -18,6 +18,8 @@ const coinWidth = 20;
 
 var clicked = false;
 
+
+//all sound
 var drop = new Audio('assets/sound/waterDrop.mp3');
 var fill = new Audio('assets/sound/fill.mp3');
 var flip = new Audio('assets/sound/flip.mp3');
