@@ -22,6 +22,9 @@ var clicked = false;
 var drop = new Audio('assets/sound/waterDrop.mp3');
 var fill = new Audio('assets/sound/fill.mp3');
 var flip = new Audio('assets/sound/flip.mp3');
+var landingCoin1 = new Audio('assets/sound/dropCoin.mp3');
+var landingCoin2 = new Audio('assets/sound/dropCoin.mp3');
+var landingCoin3 = new Audio('assets/sound/dropCoin.mp3');
 
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -302,9 +305,18 @@ async function showSpinningCoin() {
     spinningCoinDivision.style.display = "flex";
     flip.play();
 
-    setTimeout(() => { coin1.src = "assets/1/" + playerOrder[currentPlayer] + ".png" }, 800);
-    setTimeout(() => { coin2.src = "assets/2/" + playerOrder[currentPlayer] + ".png" }, 1100);
-    await setTimeout(() => { coin3.src = "assets/3/" + playerOrder[currentPlayer] + ".png"; }, 1400);
+    setTimeout(() => {
+        coin1.src = "assets/1/" + playerOrder[currentPlayer] + ".png";
+        landingCoin1.play();
+    }, 800);
+    setTimeout(() => {
+        coin2.src = "assets/2/" + playerOrder[currentPlayer] + ".png";
+        landingCoin2.play();
+    }, 1100);
+    await setTimeout(() => {
+        coin3.src = "assets/3/" + playerOrder[currentPlayer] + ".png";
+        landingCoin3.play();
+    }, 1400);
 
 
     if (flag) {
