@@ -19,12 +19,16 @@ const coinWidth = 20;
 var clicked = false;
 
 //sound import
-var drop = new Audio('assets/sound/waterDrop.mp3');
-var fill = new Audio('assets/sound/fill.mp3');
+var drop1 = new Audio('assets/sound/dropCoinFinish1.mp3');
+var drop2 = new Audio('assets/sound/dropCoinFinish2.mp3');
+var fill = new Audio('assets/sound/fillSoundFinish.mp3');
 var flip = new Audio('assets/sound/flip.mp3');
-var landingCoin1 = new Audio('assets/sound/dropCoin.mp3');
-var landingCoin2 = new Audio('assets/sound/dropCoin.mp3');
-var landingCoin3 = new Audio('assets/sound/dropCoin.mp3');
+var landingCoin1 = new Audio('assets/sound/spin1.mp3');
+var landingCoin2 = new Audio('assets/sound/spin2.mp3');
+var landingCoin3 = new Audio('assets/sound/spin3.mp3');
+var spin = new Audio('assets/sound/hitCoin.mp3');
+var Skeewiff = new Audio('assets/sound/Skeewiff.mp3');
+Skeewiff.volume = 0.2;
 
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -175,7 +179,13 @@ async function dropCoin(value, coinNb) {
 
             coinDiv.appendChild(coinImage);
 
-            drop.play();
+
+            if (Math.random() > 0.5) {
+                drop1.play();
+            } else {
+                drop2.play();
+            }
+
 
             if (value != -1) {
                 glassDiv.style.marginTop = (marginVal + coinWidth * value).toString() + "px";
@@ -303,7 +313,7 @@ async function showSpinningCoin() {
     coin3.src = "assets/coin_gif/" + playerOrder[currentPlayer] + ".gif";
 
     spinningCoinDivision.style.display = "flex";
-    flip.play();
+    spin.play();
 
     setTimeout(() => {
         coin1.src = "assets/1/" + playerOrder[currentPlayer] + ".png";
@@ -397,6 +407,7 @@ function setUpAddSelectPlayer() {
 
     var listObject = [yellow, red, green, blue];
 
+
     coinList.appendChild(yellow);
     coinList.appendChild(red);
 
@@ -416,6 +427,7 @@ function setUpAddSelectPlayer() {
         });
 
         startBtn.addEventListener("click", () => {
+            Skeewiff.play();
             selectPlayer.style.display = "none";
 
             for (var i = 0; i < numPlayer; i++) {
