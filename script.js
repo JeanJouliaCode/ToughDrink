@@ -18,10 +18,12 @@ const coinWidth = 20;
 
 var clicked = false;
 
+
 //sound import
 var drop1 = new Audio('assets/sound/dropCoinFinish1.mp3');
 var drop2 = new Audio('assets/sound/dropCoinFinish2.mp3');
 var fill = new Audio('assets/sound/fillSoundFinish.mp3');
+
 var flip = new Audio('assets/sound/flip.mp3');
 var landingCoin1 = new Audio('assets/sound/spin1.mp3');
 var landingCoin2 = new Audio('assets/sound/spin2.mp3');
