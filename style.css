@@ -24,6 +24,20 @@ body {
     src: url("./assets/OpenDyslexic-Bold.otf") format("opentype");
 }
 
+.currentPlayer {
+    width: 100%;
+    display: flex;
+    position: absolute;
+    top: 0%;
+    height: 5%;
+    margin: 0.5%;
+}
+
+.playerCoin {
+    width: 30px;
+    height: 30px;
+}
+
 .water.waterUp {
     height: 90%;
 }

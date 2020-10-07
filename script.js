@@ -8,6 +8,8 @@ var listCoinName = ["yellow", "red", "green", "blue"];
 
 var playerOrder = [];
 
+var playerCoinImage = [];
+
 var position
 
 var choosenCoin
@@ -30,7 +32,7 @@ var landingCoin2 = new Audio('assets/sound/spin2.mp3');
 var landingCoin3 = new Audio('assets/sound/spin3.mp3');
 var spin = new Audio('assets/sound/hitCoin.mp3');
 var Skeewiff = new Audio('assets/sound/Skeewiff.mp3');
-Skeewiff.volume = 0.2;
+Skeewiff.volume = 0.1;
 
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
     window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
@@ -41,6 +43,23 @@ function startGame() {
     initGlassMovement();
     setGlassWaterSize()
     setUpAddSelectPlayer();
+}
+
+function setPlayerCoin(nb) {
+    currentPlayerDisplay = document.getElementById('currentPlayer');
+    for (var i = 0; i < nb; i++) {
+        var coin = document.createElement("IMG");
+        coin.src = `assets/coin/${playerOrder[i]}.png`;
+        coin.classList.add('playerCoin');
+        playerCoinImage.push(coin);
+        currentPlayerDisplay.appendChild(coin);
+        if (i == 0) {
+            coin.style.marginTop = "5px";
+        }
+    }
+
+
+
 }
 
 function initGlassMovement() {
@@ -165,9 +184,7 @@ async function dropCoin(value, coinNb) {
             coinImage.src = "assets/side_coin/" + playerOrder[currentPlayer] + ".png";
             coinImage.style.height = (coinWidth + coinNb * 10).toString() + "px";
             coinImage.classList.add('side_coin');
-            console.log(coinDiv.children.length);
             if (coinDiv.children.length == 0) {
-                console.log('first');
                 coinImage.style.marginBottom = "10px";
             }
 
@@ -197,7 +214,9 @@ async function dropCoin(value, coinNb) {
             }
 
             setTimeout(() => {
+                playerCoinImage[currentPlayer].style.marginTop = "0px";
                 currentPlayer = (currentPlayer + 1) % numPlayer;
+                playerCoinImage[currentPlayer].style.marginTop = "5px";
                 showSpinningCoin();
             }, 400);
         }, 599);
@@ -226,17 +245,24 @@ function reset() {
     currentPlayer = 0;
     listCoinName = ["yellow", "red", "green", "blue"];
     playerOrder = [];
+    playerCoinImage = [];
     position
     choosenCoin
     water.classList.remove('waterUp');
     document.getElementById('coin_list').innerHTML = "";
+    document.getElementById('currentPlayer').innerHTML = "";
 }
 
 function displayLoser() {
     if (numPlayer == 2) {
         var winnerDiv = document.getElementById('winnerDiv');
         var winnerSpan = document.getElementById('winnerName');
+        playerCoinImage[currentPlayer].style.marginTop = "0px";
+        playerCoinImage[currentPlayer].src = `assets/coinLost/${playerOrder[currentPlayer]}.png`;
+        playerCoinImage.splice(currentPlayer, 1);
+
         currentPlayer = (currentPlayer + 1) % numPlayer;
+
         winnerSpan.textContent = playerOrder[currentPlayer];
 
         winnerDiv.style.display = "flex";
@@ -281,9 +307,17 @@ function displayLoser() {
                 loserSpan.style.color = "#4DA038";
                 break;
         }
-        playerOrder.pop(currentPlayer);
         numPlayer--;
+        playerCoinImage[currentPlayer].style.marginTop = "0px";
+        playerCoinImage[currentPlayer].src = `assets/coinLost/${playerOrder[currentPlayer]}.png`;
+        playerCoinImage.splice(currentPlayer, 1);
+        console.log(currentPlayer)
+        console.log(playerOrder);
+        playerOrder.splice(currentPlayer, 1);
+        console.log(currentPlayer)
+        console.log(playerOrder);
         currentPlayer = (currentPlayer + 1) % numPlayer;
+        playerCoinImage[currentPlayer].style.marginTop = "5px";
         loserDiv.style.display = "flex";
 
         setTimeout(() => {
@@ -353,7 +387,6 @@ async function showSpinningCoin() {
     }
 
     function reset(coinNb) {
-        console.log("reset", coinNb)
         spinningCoinDivision.style.display = "none";
         coin1.style.height = "";
         coin2.style.height = "";
@@ -426,6 +459,7 @@ function setUpAddSelectPlayer() {
                 coinList.removeChild(listObject[numPlayer - 1]);
                 numPlayer--;
             }
+
         });
 
         startBtn.addEventListener("click", () => {
@@ -437,6 +471,8 @@ function setUpAddSelectPlayer() {
             }
 
             shuffle(playerOrder);
+            setPlayerCoin(numPlayer);
+
 
             waterAndGlassUp();
         });
